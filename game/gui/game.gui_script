@@ -20,7 +20,7 @@ local function panel(message)
 
 	local str = ""
 	if string.len(message.text) >= 3 then
-		str = string.format("[+%d]", data.getwordvalue(message.text))
+		str = string.format("+%d", data.getwordvalue(message.text))
 
 		if words.is_word(message.text) then gui.set_color(gui.get_node("plus"), vmath.vector4(106/255,146/255,84/255,1))
 		else gui.set_color(gui.get_node("plus"), vmath.vector4(229/255,86/255,86/255,1))

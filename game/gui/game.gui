@@ -196,7 +196,7 @@ nodes {
 nodes {
   position {
     x: 100.0
-    y: -15.0
+    y: -18.0
     z: 0.0
     w: 1.0
   }
@@ -226,7 +226,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "[]"
+  text: "+00"
   font: "main"
   id: "plus"
   xanchor: XANCHOR_NONE

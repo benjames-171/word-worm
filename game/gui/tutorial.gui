@@ -70,7 +70,7 @@ nodes {
 nodes {
   position {
     x: 0.0
-    y: 150.0
+    y: 140.0
     z: 0.0
     w: 1.0
   }
@@ -88,7 +88,7 @@ nodes {
   }
   size {
     x: 640.0
-    y: 150.0
+    y: 100.0
     z: 0.0
     w: 1.0
   }
@@ -101,8 +101,7 @@ nodes {
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: "Tap letters to make words\n"
-  "then tap your word or\n"
-  "press SPACE to submit."
+  "then tap your completed word."
   font: "main"
   id: "tutorial_text"
   xanchor: XANCHOR_NONE
@@ -135,7 +134,7 @@ nodes {
 nodes {
   position {
     x: 0.0
-    y: -137.0
+    y: -100.0
     z: 0.0
     w: 1.0
   }
@@ -153,7 +152,7 @@ nodes {
   }
   size {
     x: 640.0
-    y: 100.0
+    y: 50.0
     z: 0.0
     w: 1.0
   }
@@ -165,8 +164,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "Words must be 3 or more letters.\n"
-  "Longer words score higher."
+  text: "Words must be 3 or more letters."
   font: "main"
   id: "tutorial_text1"
   xanchor: XANCHOR_NONE
@@ -199,7 +197,7 @@ nodes {
 nodes {
   position {
     x: 0.0
-    y: -250.0
+    y: -200.0
     z: 0.0
     w: 1.0
   }
@@ -263,7 +261,7 @@ nodes {
 nodes {
   position {
     x: 0.0
-    y: -200.0
+    y: -180.0
     z: 0.0
     w: 1.0
   }
@@ -336,7 +334,7 @@ nodes {
   }
   size {
     x: 200.0
-    y: 100.0
+    y: 32.0
     z: 0.0
     w: 1.0
   }
