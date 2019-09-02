@@ -1,7 +1,7 @@
 local data = require "main.data"
 local words = require "main.words"
 
-local MAX_WORD_LEN = 48
+local MAX_WORD_LEN = 32
 
 local function newlevel(self)
 	self.word = ""

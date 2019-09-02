@@ -17,9 +17,9 @@ default_texture_mag_filter = nearest
 shared_state = 1
 
 [project]
-title = WordWorm
+title = Word Worm
 custom_resources = assets/dictionary.txt
-version = 2.0
+version = 2.1
 
 [physics]
 debug = 0
@@ -28,6 +28,8 @@ scale = 0.1
 
 [html5]
 splash_image = /assets/png/splash.png
+show_made_with_defold = 0
+show_fullscreen_button = 0
 
 [android]
 package = com.onesevenone.wordworm
