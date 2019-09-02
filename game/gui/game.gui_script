@@ -1,0 +1,37 @@
+local data = require ("main.data")
+local words = require ("main.words")
+
+local function disablenode (self, node)
+	gui.set_enabled(gui.get_node("box"), false)
+end
+
+function init(self)
+	gui.set_text(gui.get_node("word"), "")
+	gui.animate(gui.get_node("shutter"), gui.PROP_POSITION, vmath.vector4(320, 75, 0, 0), gui.EASING_INOUTQUAD, 0.5, 0, disablenode)
+end
+
+local function panel(message)
+	gui.set_text(gui.get_node("word"), string.upper(message.text))
+	local size = gui.get_text_metrics_from_node(gui.get_node("word"))
+	local scale = (512-32) / size.width
+	if scale > 1 then scale = 1 end
+	gui.set_scale(gui.get_node("word"), vmath.vector3(scale, scale, 1))
+	gui.set_text(gui.get_node("score"), string.format("%06d", data.score))
+
+	local str = ""
+	if string.len(message.text) >= 3 then
+		str = string.format("[+%d]", data.getwordvalue(message.text))
+
+		if words.is_word(message.text) then gui.set_color(gui.get_node("plus"), vmath.vector4(106/255,146/255,84/255,1))
+		else gui.set_color(gui.get_node("plus"), vmath.vector4(229/255,86/255,86/255,1))
+		end
+	end
+	gui.set_text(gui.get_node("plus"), str)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("word") then
+		panel(message)
+	end
+end
+

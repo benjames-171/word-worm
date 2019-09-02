@@ -1,0 +1,55 @@
+local data = require "main.data"
+
+local function disable_node (self, node)
+	gui.set_enabled(node, false)
+end
+
+function init(self)
+	self.node = gui.get_node("container")
+	gui.set_enabled(self.node, false)
+	gui.set_color(self.node, vmath.vector4(1,1,1,0))
+	gui.set_position(self.node, vmath.vector3(256, 400, 0))
+end
+
+local function hiscores(self)
+	local n = 1
+	while data.hiscores[n] >= data.score and n <= 10 do
+		n = n + 1
+	end
+
+	if n <= 10 then
+		for s = 10, n, -1 do
+			data.hiscores[s + 1] = data.hiscores[s]
+		end
+		data.hiscores[n] = data.score
+	end
+	return n
+end
+
+local function show(self)
+	data.state = data.STATE_GAMEOVER
+	gui.set_enabled(self.node, true)
+	gui.animate(self.node, gui.PROP_POSITION, vmath.vector3(256,448,0), gui.EASING_INOUTQUAD, 0.5, 0.0)
+	gui.animate(self.node, gui.PROP_COLOR, vmath.vector4(1,1,1,1), gui.EASING_INOUTQUAD, 0.5, 0.0)
+	gui.set_text(gui.get_node("score"), string.format("%06d", data.score))
+	local f = hiscores(self)
+	if f == 1 then gui.set_text(gui.get_node("your score"), "A NEW HIGH SCORE!") end
+end
+
+local function processinput(self, action_id, action)
+	if action_id == hash("click") and action.pressed then
+		if gui.pick_node(gui.get_node("button"), action.x, action.y) then
+			--msg.post("view#script", "reset")
+			msg.post("main:/handler", "show_menu")
+			data.savegamefile()
+		end	
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("show") then
+		show(self)
+	elseif message_id == hash("input") then
+		processinput(self, message.action_id, message.action)
+	end
+end

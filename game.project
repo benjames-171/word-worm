@@ -1,0 +1,36 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+render = /render/custom.renderc
+
+[input]
+game_binding = /input/game.input_bindingc
+
+[display]
+width = 640
+height = 960
+
+[graphics]
+default_texture_min_filter = nearest
+default_texture_mag_filter = nearest
+
+[script]
+shared_state = 1
+
+[project]
+title = WordWorm
+custom_resources = assets/dictionary.txt
+version = 2.0
+
+[physics]
+debug = 0
+gravity_y = -400.0
+scale = 0.1
+
+[html5]
+splash_image = /assets/png/splash.png
+htmlfile = /custom.html
+
+[android]
+package = com.onesevenone.wordworm
+version_code = 5
+

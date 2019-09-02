@@ -1,0 +1,170 @@
+local data = require "main.data"
+local words = require "main.words"
+
+local MAX_WORD_LEN = 48
+
+local function newlevel(self)
+	self.word = ""
+	data.bestword = ""
+	--data.level = data.maxlevel
+	if self.worm then go.delete(self.worm) end
+	self.worm = factory.create("#worm_factory", vmath.vector3(320, 1450, 1))
+	msg.post("/level", "newlevel")
+	msg.post("main:/sound#music", "play_sound", {gain = 1.0})
+	msg.post("view#gui", "word", {text = self.word})
+	if data.level > 1 then data.state = data.STATE_PLAYING end
+end
+
+function init(self)
+	self.box = {}
+	self.worm = nil
+	data.score = 0
+	msg.post(".", "acquire_input_focus")
+	newlevel(self)
+end
+
+local function delete(self, all, user)
+	local pos = self.box[#self.box]
+	if pos ~= nil then
+		self.word = self.word:sub(1, -2)
+		msg.post("view#gui", "word", {text = self.word})
+		if all then tilemap.set_tile("/level#tilemap", "main", pos.x, pos.y, 30) end
+		if user then msg.post("main:/sound#delete", "play_sound", {gain = 1.0}) end
+		tilemap.set_tile("/level#tilemap", "select", pos.x, pos.y, 30)
+		table.remove(self.box, #self.box)
+	end
+end
+
+local function clear(self, all, user)
+	if self.box[#self.box] and user then
+		msg.post("main:/sound#clear_text", "play_sound", {gain = 1.0}) 
+	end
+		
+	while self.box[#self.box] ~= nil do
+		delete(self, all, false)
+	end
+
+	self.word = ""
+	msg.post("view#gui", "word", {text = self.word})
+end
+
+local function topten(self)
+	local n = 1
+	while string.len(data.bestwords[n]) >= string.len(self.word) and n <= 10 do
+		if data.bestwords[n] == self.word then n = 10 end
+		n = n + 1
+	end
+
+	if n <= 10 then
+		for s = 10, n, -1 do
+			data.bestwords[s + 1] = data.bestwords[s]
+		end
+		data.bestwords[n] = self.word
+	end
+end
+
+local function submit(self)
+	local len = string.len(self.word)
+	if len >= 3 then
+		if words.is_word(self.word) then
+			if string.len(self.word) > string.len(data.bestword) then
+				data.bestword = self.word
+			end
+			topten(self)
+			data.score = data.score + data.getwordvalue(self.word)
+			data.scrollpos.y = data.scrollpos.y + ((len - 3) * 32)
+			clear(self, true, false)
+			msg.post("main:/sound#correct", "play_sound", {gain = 1.0})
+		else
+			clear(self, false, false)
+			msg.post("main:/sound#incorrect", "play_sound", {gain = 1.0})
+		end
+	else
+		msg.post("main:/sound#short", "play_sound", {gain = 1.0})
+	end
+end
+
+local function deselect(self, x, y)
+	tilemap.set_tile("/level#tilemap", "select", x, y, 30)
+	local i = 1
+	while (self.box[i].x ~= x or self.box[i].y ~=y) and self.box[i] ~= nil do
+		i = i + 1
+	end
+	table.remove(self.box, i)
+
+	self.word = ""
+	i = 1
+	local c
+	while(self.box[i]) do
+		c = string.char(tilemap.get_tile("/level#tilemap", "main", self.box[i].x, self.box[i].y) + 96)
+		self.word = self.word .. c
+		i = i + 1
+	end
+	msg.post("main:/sound#delete", "play_sound", {gain = 1.0})
+	msg.post("view#gui", "word", {text = self.word})
+end
+
+local function select(self, action)
+	sx, sy, w, h = tilemap.get_bounds("/level#tilemap")
+
+	if action.y < 100 then
+		submit(self)
+		return
+	end
+
+	local pos = data.world2tile(vmath.vector3((action.x / data.PIXEL_SIZE) + data.actualpos.x, (action.y / data.PIXEL_SIZE) + data.actualpos.y, 0))
+
+	if pos.x < sx or pos.x > sx + w or pos.y < sy or pos.y > sy + h then return end
+
+	local t = tilemap.get_tile("/level#tilemap", "select", pos.x, pos.y)
+	local c = tilemap.get_tile("/level#tilemap", "main", pos.x, pos.y)
+
+	if (t == 0 or t == 30) and (c ~= 0 and c <= 26) then
+		if string.len(self.word) >= MAX_WORD_LEN then
+			sound.play("main:/sound#short")
+			return
+		end
+		tilemap.set_tile("/level#tilemap", "select", pos.x, pos.y, 31)
+		local c = string.char(tilemap.get_tile("/level#tilemap", "main", pos.x, pos.y) + 96)
+		table.insert(self.box, pos)
+		self.word = self.word .. c
+		msg.post("view#gui", "word", {text = self.word})
+		msg.post("main:/sound#tap", "play_sound", {gain = 1.0})
+	elseif t == 31 then
+		deselect(self, pos.x, pos.y)
+	end
+end
+
+local function input_playing(self, action_id, action)
+	if action_id == hash("click") and action.pressed then
+		select(self, action)
+	elseif action_id == hash("delete") and action.pressed then
+		delete(self, false, true)
+	elseif action_id == hash("clear") and action.pressed then
+		clear(self, false, true)
+	elseif action_id == hash("action") and action.pressed then
+		submit(self)
+	elseif action_id == hash("quit") and action.pressed then
+		msg.post("main:/handler", "show_menu")
+		msg.post("main:/sound#music", "stop_sound", {})
+		data.savegamefile()
+	end
+end
+
+function on_input(self, action_id, action)
+	if data.state == data.STATE_PLAYING then
+		input_playing(self, action_id, action)
+	elseif data.state == data.STATE_LEVELCLEAR then
+		msg.post("view#clear", "input", {action_id = action_id, action = action})
+	elseif data.state == data.STATE_GAMEOVER then
+		msg.post("view#gameover", "input", {action_id = action_id, action = action})
+	elseif data.state == data.STATE_GETREADY then
+		msg.post("view#tutorial", "input", {action_id = action_id, action = action})
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("newlevel") then newlevel(self) end
+end
+
+
