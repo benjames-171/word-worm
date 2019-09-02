@@ -8,7 +8,6 @@ function init(self)
 	self.node = gui.get_node("container")
 	gui.set_enabled(self.node, false)
 	gui.set_color(self.node, vmath.vector4(1,1,1,0))
-	gui.set_position(self.node, vmath.vector3(320, 400, 0))
 end
 
 local function show(self)

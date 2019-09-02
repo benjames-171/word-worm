@@ -8,7 +8,6 @@ function init(self)
 	self.node = gui.get_node("container")
 	gui.set_enabled(self.node, false)
 	gui.set_color(self.node, vmath.vector4(1,1,1,0))
-	gui.set_position(self.node, vmath.vector3(256, 400, 0))
 end
 
 local function hiscores(self)
@@ -29,7 +28,7 @@ end
 local function show(self)
 	data.state = data.STATE_GAMEOVER
 	gui.set_enabled(self.node, true)
-	gui.animate(self.node, gui.PROP_POSITION, vmath.vector3(256,448,0), gui.EASING_INOUTQUAD, 0.5, 0.0)
+	gui.animate(self.node, gui.PROP_POSITION, vmath.vector3(320,480,0), gui.EASING_INOUTQUAD, 0.5, 0.0)
 	gui.animate(self.node, gui.PROP_COLOR, vmath.vector4(1,1,1,1), gui.EASING_INOUTQUAD, 0.5, 0.0)
 	gui.set_text(gui.get_node("score"), string.format("%06d", data.score))
 	local f = hiscores(self)

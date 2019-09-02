@@ -28,7 +28,6 @@ scale = 0.1
 
 [html5]
 splash_image = /assets/png/splash.png
-htmlfile = /custom.html
 
 [android]
 package = com.onesevenone.wordworm
