@@ -1,23 +1,10 @@
-local data = require "main.data"
 local words = require "main.words"
-local lock = require "main.lock"
-
-local function domaincheck()
-	local v = true
-	
-	lock.add_domain("localhost")
-	lock.add_domain("jacobsladder.uk")
-
-	if not lock.verify_domain() then v = false end
-
-	return v
-end
 
 function init(self)
-	if domaincheck() then msg.post(".", "acquire_input_focus") end
+	msg.post(".", "acquire_input_focus")
 	msg.post("handler#menu", "load")
 	math.randomseed(os.time())
-	local t = math.random(1,5)
+	local _ = math.random(1,5)
 	words.load()
 end
 

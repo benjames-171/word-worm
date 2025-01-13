@@ -4,18 +4,6 @@ local function disablenode (self, node)
 	gui.set_enabled(node, false)
 end
 
-local function bottom(self, node)
-	pos = gui.get_position(node)
-	pos.y = pos.y + 10
-	gui.animate(node, gui.PROP_POSITION, pos, gui.EASING_INOUTQUAD, 0.5, 0, top)
-end
-
-function top(self, node)
-	pos = gui.get_position(node)
-	pos.y = pos.y - 10
-	gui.animate(node, gui.PROP_POSITION, pos, gui.EASING_INOUTQUAD, 0.5, 0, bottom)
-end
-
 function init(self)
 	msg.post(".", "acquire_input_focus")
 	self.node = gui.get_node("container")
@@ -24,9 +12,8 @@ function init(self)
 
 	for l = 1, 8 do
 		local node = gui.get_node(string.format("box%d", l))
-		pos = gui.get_position(node)
-		pos.y = pos.y - 420
-		gui.animate(node, gui.PROP_POSITION, pos, gui.EASING_INOUTQUAD, 0.5, l/8, top)
+		local pos = gui.get_position(node)
+		gui.animate(node, "position.y", pos.y + 10, gui.EASING_INOUTQUAD, math.random(50,150)/100, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
 	end
 
 	gui.animate(gui.get_node("start_container"), gui.PROP_POSITION, vmath.vector3(0,-100,0), gui.EASING_INOUTQUAD, 0.5, 0.5)

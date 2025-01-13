@@ -1,7 +1,7 @@
 local words = require ("main.words")
 
 local function populate(self)
-	sx, sy, w, h = tilemap.get_bounds("#tilemap")
+	local sx, sy, w, h = tilemap.get_bounds("#tilemap")
 
 	for y = 1, h+sy - 14 do
 		for x = sx + 1, w + sx - 2 do

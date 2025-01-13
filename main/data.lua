@@ -92,8 +92,7 @@ end
 
 function M.getwordvalue(str)
 	local v = string.len(str) - 3
-
-	r = 10
+	local r = 10
 	while v > 0 do
 		r = r * 1.5
 		v = v - 1

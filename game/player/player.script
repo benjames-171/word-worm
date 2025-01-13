@@ -105,7 +105,7 @@ local function deselect(self, x, y)
 end
 
 local function select(self, action)
-	sx, sy, w, h = tilemap.get_bounds("/level#tilemap")
+	local sx, sy, w, h = tilemap.get_bounds("/level#tilemap")
 
 	if action.y < 100 then
 		submit(self)
@@ -125,9 +125,9 @@ local function select(self, action)
 			return
 		end
 		tilemap.set_tile("/level#tilemap", "select", pos.x, pos.y, 31)
-		local c = string.char(tilemap.get_tile("/level#tilemap", "main", pos.x, pos.y) + 96)
+		local char = string.char(tilemap.get_tile("/level#tilemap", "main", pos.x, pos.y) + 96)
 		table.insert(self.box, pos)
-		self.word = self.word .. c
+		self.word = self.word .. char
 		msg.post("view#gui", "word", {text = self.word})
 		msg.post("main:/sound#tap", "play_sound", {gain = 1.0})
 	elseif t == 31 then
